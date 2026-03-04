@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>X vs O: The Ultimate Showdown</title>
+</head>
+<body>
+
+    <center>
+        <marquee scrollamount="6">❌ TIC-TAC-TOE ⭕ BRAIN BATTLE ❌ NO CSS ALLOWED ⭕</marquee>
+        <h1>Tic-Tac-Toe: Strategy Terminal</h1>
+        
+        <p>Current Turn: <mark id="turnDisplay">X</mark></p>
+    </center>
+
+    <hr>
+
+    <center>
+        <table border="5" cellpadding="30">
+            <tr>
+                <td><button id="0" onclick="makeMove(0)">_</button></td>
+                <td><button id="1" onclick="makeMove(1)">_</button></td>
+                <td><button id="2" onclick="makeMove(2)">_</button></td>
+            </tr>
+            <tr>
+                <td><button id="3" onclick="makeMove(3)">_</button></td>
+                <td><button id="4" onclick="makeMove(4)">_</button></td>
+                <td><button id="5" onclick="makeMove(5)">_</button></td>
+            </tr>
+            <tr>
+                <td><button id="6" onclick="makeMove(6)">_</button></td>
+                <td><button id="7" onclick="makeMove(7)">_</button></td>
+                <td><button id="8" onclick="makeMove(8)">_</button></td>
+            </tr>
+        </table>
+        <br>
+        <button onclick="resetGame()">🔄 Reset Board</button>
+    </center>
+
+    <hr>
+
+    <h3>Match Diagnostics</h3>
+    <label>Game Completion:</label>
+    <progress id="gameProgress" value="0" max="9"></progress>
+    
+    <p>System Status: <samp id="status">Waiting for move...</samp></p>
+    
+    <p>To restart the match quickly, press <kbd>F5</kbd>.</p>
+
+    <hr>
+
+    <dialog id="winModal">
+        <h2 id="winMessage">Victory!</h2>
+        <p>The match has concluded based on logical alignment.</p>
+        <samp>Log: Three-in-a-row detected.</samp>
+        <br><br>
+        <button onclick="resetGame()">Play Again</button>
+    </dialog>
+
+    <p>This game uses a basic <abbr title="Artificial Intelligence">AI</abbr> (if you play alone) or 2-player logic.</p>
+    <p><cite>Reference: Combinatorial Game Theory Basics</cite></p>
+
+    <script>
+        let currentPlayer = 'X';
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let gameActive = true;
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+            [0, 4, 8], [2, 4, 6]             
+        ];
+
+        function makeMove(id) {
+            if (board[id] === "" && gameActive) {
+                board[id] = currentPlayer;
+                document.getElementById(id).innerText = currentPlayer;
+                
+                let moves = board.filter(x => x !== "").length;
+                document.getElementById('gameProgress').value = moves;
+                document.getElementById('status').innerText = "Processing move " + moves + "...";
+
+                checkWinner();
+                
+                if (gameActive) {
+                    currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+                    document.getElementById('turnDisplay').innerText = currentPlayer;
+                }
+            }
+        }
+
+        function checkWinner() {
+            for (let pattern of winPatterns) {
+                let [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    gameActive = false;
+                    showResult(currentPlayer + " Wins!");
+                    return;
+                }
+            }
+
+            if (!board.includes("")) {
+                gameActive = false;
+                showResult("It's a Draw!");
+            }
+        }
+
+        function showResult(msg) {
+            document.getElementById('winMessage').innerText = msg;
+            document.getElementById('winModal').showModal();
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
